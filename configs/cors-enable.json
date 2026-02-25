@@ -1,0 +1,92 @@
+{
+  "id": "config-20260203-1rq1nt",
+  "name": "允许跨域",
+  "version": "1.0",
+  "description": "启用后，所有接口请求允许跨域访问，不受浏览器同源策略的约束。如需携带凭据（如cookie），需手动设置 `Access-Control-Allow-Credentials: true`，并指定明确的 `Access-Control-Allow-Origin` 对应的地址。",
+  "settings": {},
+  "rules": [
+    {
+      "id": "rule-001",
+      "name": "接口请求设置允许跨域响应头",
+      "enabled": true,
+      "priority": 0,
+      "stage": "response",
+      "match": {
+        "allOf": [
+          {
+            "type": "resourceType",
+            "values": [
+              "xhr",
+              "fetch"
+            ]
+          }
+        ],
+        "anyOf": null
+      },
+      "actions": [
+        {
+          "type": "setHeader",
+          "value": "*",
+          "name": "Access-Control-Allow-Origin"
+        },
+        {
+          "type": "setHeader",
+          "value": "GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD",
+          "name": "Access-Control-Allow-Methods"
+        },
+        {
+          "type": "setHeader",
+          "value": "Content-Type, Authorization, X-Requested-With, Accept, Origin, User-Agent, Referer, Cache-Control, X-API-Key",
+          "name": "Access-Control-Allow-Headers"
+        },
+        {
+          "type": "setHeader",
+          "value": "Content-Length, Content-Range, X-Total-Count",
+          "name": "Access-Control-Expose-Headers"
+        },
+        {
+          "type": "setHeader",
+          "value": "86400",
+          "name": "Access-Control-Max-Age"
+        },
+        {
+          "type": "setHeader",
+          "value": "false",
+          "name": "Access-Control-Allow-Credentials"
+        }
+      ]
+    },
+    {
+      "id": "rule-002",
+      "name": "响应OPTIONS预检请求",
+      "enabled": true,
+      "priority": 0,
+      "stage": "request",
+      "match": {
+        "allOf": [
+          {
+            "type": "method",
+            "values": [
+              "OPTIONS"
+            ]
+          }
+        ],
+        "anyOf": null
+      },
+      "actions": [
+        {
+          "type": "block",
+          "statusCode": 200,
+          "headers": {
+            "Access-Control-Allow-Credentials": "false",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With, Accept, Origin, User-Agent, Referer, Cache-Control, X-API-Key",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Expose-Headers": "Content-Length, Content-Range, X-Total-Count",
+            "Access-Control-Max-Age": "86400"
+          }
+        }
+      ]
+    }
+  ]
+}
